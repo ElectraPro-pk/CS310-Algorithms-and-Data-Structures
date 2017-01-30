@@ -1,0 +1,49 @@
+After testing on Easy, Tictactoe, Nim, and Fifteen, I think it is safe to say my Backtrack works. At first, it would look for favorable moves and simply pick the first one, resulting in the computer picking the very first move it was able to, but I made a quick modification to pick a random move out of the favorable moves.
+
+I considered adding a height value to the nodes, alongside its weight, which would keep track of a leaf's distance from the root gamestate. My intention was to have the height propagate through its parents in a similar manner to the weight, with the end result being that the algorithm could make a decision to pick the favorable move that provided victory in the least number of moves. This was important for a few cases where the computer was facing certain victory within a single move, but ignored it because another move also provided victory at a later point.
+ 
+I ended up not wanting to mess around with my code, since I needed to focus my time on the Dynamic programming. I might go abck and optimize it for practice, because it's honestly a really interesting idea and I have the basic structre and implementation thought out already.
+
+
+
+After reading question 4, I slapped myself on my head for making Backrack random, since it meant it was near impossible to run time tests. I edited it to simply pick the first option again.
+
+I didn't have to change much in order to create Dynamic - I only needed to make it so every time a node was inserted into the tree, it would also be inserted into a hashmap. If there was ever a need to search for a node, I simply redirected it to the hashmap. 
+
+Tictactoe, human 1, backtrack 2:
+	Total ms:	685
+	Total CPU:	250
+	Call Count:	4
+	Sec per Move:	2.029
+
+Tictactoe, human 1, dynamic 2:
+	Total ms:	89
+	Total CPU:	62
+	Call Count:	4
+	Sec per Move:	0.022
+
+What's odd is that when I went first and chose 1, Backtrack chose 3, and Dynamic chose 2. They diverged from that point on. My guess is that the hashmap somehow changed the ordering structure. Worst case scenario, I messed up the code and it hasn't crashed.
+
+Fifteen, backtrack 1, human 2:
+	(Out of memory error after 11 seconds)
+Fifteen, dynamic 1, backtrack 2:
+	Total ms:	151
+	Total CPU:	78
+	Call Count:	4
+	Sec per Move:	0.038
+
+I thought this was a bug until I tried Easy with backtrack player 1, which works perfectly fine. It just seems that my implementation of backtrack is an outrageously greedy algorithm.
+
+Nim, human 1, backtrack 2:
+	Total ms:	38
+	Total CPU:	46
+	Call Count:	4
+	Sec per Move:	0.010
+
+Nim, human 1, dynamic 2:
+	Total ms:	12
+	Total CPU:	15
+	Call Count:	4
+	Sec per Move:	0.004
+
+Again, the algorithms chose different paths. Before, I was worried that Backtrack was the correct algorithm and I somehow broke it when implementing Dynamic, but now I believe it is the other way around. I wonder what I fixed.

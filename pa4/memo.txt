@@ -1,0 +1,3 @@
+I found 26 game states in total, where 10 game states the the result of one player quitting (and are thus identical to the game state before the quit), and 16 game states are the result of non-quit actions.
+
+There are 10 game not-over game states, and 16 game-over game states. Of these 16 game-over game states, 10 are the result of one player quitting, and 6 are the result of non-quit actions.

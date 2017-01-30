@@ -1,0 +1,105 @@
+1. What development tools (IDE, etc.) did you use? Did you develop on UNIX, or if on your own PC, did you have any problem recompiling and running on UNIX?
+
+I used IntelliJ to develop. I had insane problems recompiling on UNIX due to version mismatches - My IntelliJ was running JDK 1.8, and the UNIX was running on JDK 1.7. Quite a pickle! I tried javac -target 1.7, but that still gave me a UnsupportedClassVersionError 52.0. I even tried writing an entirely new .java file where I copied the code over word by word, and still nothing. Google and StackOverflow all seemed to saw the same thing: to use the -target 1.7 command, but to no avail. I eventually stumbled upon the "java -cp . cs310.SpellChecker <testinput" command but Dan Manning, and that fixed everything. I have literally no idea how changing the class paths fixes a version error, but I will make my victories where I get them.
+
+
+2. In memo.txt, show output of command line compile and run in this project, and tree output ( or the command du for UNIX, which gives you the directory structure). Describe the display of the project source filements in your IDE.
+
+rammite@vm72:~/cs310/pa1$ du
+947     ./classes/cs310
+1878    ./classes
+23      ./src/cs310
+24      ./src
+1903    .
+
+Where all .java files are in /src/cs310 and all .class and the custom dictionary are in /classes/cs310
+
+
+3. Try to determine from your code reading whether you can switch from TreeMap to HashMap in GenerateCrossReference() (pg 498). Write down your analysis. Try out the switch to see if your analysis is correct.
+
+You can change TreeMap to HashMap, as the only thing specific to TreeMap is its abilty to be compared and traversed due to it being sorted. GenerateCrossReference does not take advanatage of these abilities. Switching TreeMap to HashMap does not result in any errors.
+
+
+4. Describe your analysis of the qualifying exam problem and choice of Map there.
+
+This was rather simple! I literally only changed three lines:
+- changed the SinglyLinkedList declaration to a HashMap declaration
+- declared i outside of its for loop so it would be in scope for later
+- changed data.add(user) to data.put(i,user) to conform to HashMap functions.
+I could have removed most of the for loop since it would not require a loop to search.
+I used a HashMap because it was more time efficent and we did not require the values to be sorted.
+
+
+5. Compare the performance of the qualifying exam problem implemented with lists vs. maps, for N input lines.
+
+With SinglyLinkedLists:
+	First for loop will go through the whole SinglyLinkedList O(N), then continue with
+	only O(1) functions, thus being O(N)
+
+With HashMaps:
+	First for loop instantly gets the user O(1), then continue with only O(1) 	functions, thus being O(1)
+
+
+6. Estimate the maximum memory in use for 500 terminals and N input lines of the log file, assuming 90% of observations show the user on their assigned terminal, and 10% are using random terminals. Note that a Java character uses 2 bytes.
+
+Assumptions:
+	Usernames average 8 characters
+	The HashMap itself takes no memory since it would not scale with N
+	Usages themselves take no memory, just the data values inside it
+
+Usage = 8 Chars		1 Int
+Usage = 16 Bytes   +    4 Bytes
+Usage = 20 Bytes
+
+90% N = Just 1 Usage per input line
+90% N = 20 Bytes per input line
+90% N = 20 Bytes * N
+
+10% N = 
+Each person could have a maximum of M Usages, where M is the total number of times they
+used a terminal with a maximum of 500. If it were just one person taking up N input lines, then maximum Usages would be N. Since we assume 10% of the population is going randomly,
+let us assume that the 10% collectively uses N*0.10 (10% N) Usages.
+10% N = N*0.1 Usages per input line
+10% N = N*0.1 * 20 Bytes per input line
+10% N = N*2 per input line
+10% N = N*2 * N
+10% N = N^2 * 2
+
+N = 10% N + 90% N
+N = (N^2 * 2) + (20 * N) Bytes
+N = 2N^2 + 20N Bytes
+
+
+7. Analyze the CPU performance of the spell-checker, for N words in the big dictionary and 
+O(1) words to check, and O(1) words in the personal dictionary. Also estimate memory use.
+
+Creating the dictionary is O(N) + O(1)
+Making the HashMap wrongmap is O(1)
+Making the Scanner input is O(1)
+
+First while loop goes through the whole file once. O(N)
+	Second while loop goes through each line. O(N)^-1
+		HashMap dictionary lookup is O(1)
+		HashMap wrongMap lookup is O(1)
+		HashMap wrongMap put is O(1)
+		HashMap wrongMap get is O(1)
+
+For Each loop goes through the entire wrongMap. O(N)
+	Quick line number for loop will loop through entries in the arraylist. O(N)/N = O(1)
+	Swap Loop goes through one word. O(N)/N = O(1)
+		Swap is O(1)
+		Dictionary Check must parse the entire dictionary. O(N)
+	Remove Loop goes through one word. O(1)
+		Remove is O(1)
+		Dictionary Check must parse the entire dictionary. O(N)
+	Add Loop goes through one word. O(1)
+		Add is O(1)
+		Dictionary Check must parse the entire dictionary. O(N)
+	Print is O(1)
+
+N+1 + 1 + 1 + N*N^-1*1*1*1*1 + N*(1+(1*1+N)+(1*1+N)+(1*1+N)+1)
+N + N*N^-1 + N*(3N)
+N + N*N^-1 + 3N^2
+O(3N^2 + N*N^-1 + n)
+O(3N^2)
+O(N^2)

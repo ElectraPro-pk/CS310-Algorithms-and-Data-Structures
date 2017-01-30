@@ -1,0 +1,29 @@
+1. Does your HashSet1 prove that any Map implementation can be turned into a Set application (with the help of AbstractCollection)? Why or why not?
+
+I think it does prove that any Map can be turned into a Set, due to a Map functionally being a Set with each key leading to a value, versus a Set which just handles keys.
+
+
+2. Report on experiments with TestMap. Does your data agree with the O(1) claim of hashing?
+
+I'm... not sure! The unix server was outrageously uncooperative. It spat out this test data exactly once before the server seemed to throttle my connection, halting all further testing.
+
+rammite@vm72:~/cs310/pa2/classes$ java -cp . cs310.client.TestMapPerf 10000 words
+Testing class java.util.HashMap for all three cases.
+- Case 0 took 8 milliseconds to do 2500 amount of gets, which is 3.2 microseconds per get.
+- Case 1 took 9 milliseconds to do 5000 amount of gets, which is 1.8 microseconds per get.
+- Case 2 took 75 milliseconds to do 10000 amount of gets, which is 7.5 microseconds per get.
+Testing class cs310.util.HashMap1 for all three cases.
+- Case 0 took 19 milliseconds to do 2500 amount of gets, which is 7.6 microseconds per get.
+- Case 1 took 17 milliseconds to do 5000 amount of gets, which is 3.4 microseconds per get.
+- Case 2 took 4 milliseconds to do 10000 amount of gets, which is 0.4 microseconds per get.
+Testing class java.util.TreeMap for all three cases.
+- Case 0 took 23 milliseconds to do 2500 amount of gets, which is 9.2 microseconds per get.
+- Case 1 took 11 milliseconds to do 5000 amount of gets, which is 2.2 microseconds per get.
+- Case 2 took 16 milliseconds to do 10000 amount of gets, which is 1.6 microseconds per get.
+rammite@vm72:~/cs310/pa2/classes$
+
+I'm really confused!
+
+If HashMap was O(1), Case 1 should take 16 ms and not half as much, and Case 2 should take 32 ms and not twice as much!
+
+HashMap1 and TreeSet have better data, but in the wrong direction! How do the gets become easier as there are more gets?!?
