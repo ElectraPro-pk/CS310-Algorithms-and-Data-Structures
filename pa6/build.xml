@@ -1,0 +1,162 @@
+
+<!-- 
+/* ==========================================
+ * JGraphT : a free Java graph-theory library
+ * ==========================================
+ *
+ * Project Info:  http://jgrapht.sourceforge.net/
+ * Project Creator:  Barak Naveh (http://sourceforge.net/users/barak_naveh)
+ *
+ * (C) Copyright 2003-2006, by Barak Naveh and Contributors.
+ *
+ * This library is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation; either version 2.1 of the License, or
+ * (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public
+ * License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this library; if not, write to the Free Software Foundation, Inc.,
+ * 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
+ */
+/* ~~~~~~~~~
+ * build.xml
+ * ~~~~~~~~~
+ * (C) Copyright 2003-2006, by Barak Naveh and Contributors.
+ *
+ * Original Author:  Barak Naveh
+ * Contributor(s):   John V. Sichi
+ *
+ * $Id: build.xml 640 2008-09-29 06:56:02Z perfecthash $
+ *
+ * Changes
+ * ~~~~~~~
+ * 24-Jul-2003 : Initial revision (BN);
+ * 15-Aug-2003 : Used wildcards instead of enumerating files(JVS);
+ * 15-Aug-2003 : Added checkstyle task (JVS);
+ * 15-Aug-2003 : Used JUnit batch test feature (JVS);
+ * 15-Aug-2003 : Added jalopy task (JVS);
+ * 03-Sep-2003 : Added etags support (JVS);
+ * 24-Feb-2004 : Removed duplicates and cleaned code (BN);
+ * 06-Mar-2004 : Added tasks for building a release by CVS tag (BN);
+ * 13-Oct-2004 : Added task for building experimental package (MB);
+ * 31-Jul-2005 : Added support for retroweaver (JVS);
+ * 23-Apr-2006 : Renamed package to org.jgrapht (JVS);
+ * 25-Jun-2006 : Fold experimental into main build (JVS);
+ * 01-Jul-2006 : Remove checkstyle, switch from CVS to SVN (JVS);
+ * 29-Sep-2007 : Dropped support for retroweaver in 0.7.2 release (JVS);
+ * 28-Sep-2008 : Moved to JDK 1.6 for 0.8.0 release (JVS);
+ *
+ */
+-->
+
+<!--
+/**
+ * An ant build file for JGraphT (use Ant 1.6.0 and above).
+ * Before running this script, make sure that the libraries used by JGraphT are
+ * found under ./lib directory. This script will create directories ./build 
+ * and ./testbuild for generated classfiles. These can be removed at any time 
+ * via the 'clean' target.  A temporary ./distribution directory is created 
+ * when building a distribution. A ./javadoc directory is created for the 
+ * Javadoc HTML pages. 
+ *
+ * This script was originally based on a nice script written by David Gilbert.
+ *
+ * @author Barak Naveh
+ * @author John V. Sichi
+ *
+ * @since 24-Jul-2003
+ */
+-->
+
+<project name="jgrapht" basedir=".">
+
+	<property name="latest.version.name" value="0.8.0" />
+
+	<!-- Initialization. -->
+	<target name="init.local" unless="svntag">
+		<property name="checkout.dir" value="checkout" />
+		<property name="project.version" value="${latest.version.name}-local" />
+	</target>
+
+	<target name="init" depends="init.local">
+		<echo level="info">JAVA_HOME=${java.home}</echo>
+		<property name="project.name" value="jgrapht" />
+		<property name="project.prefix" value="${project.name}-${project.version}" />
+
+		<!-- Directories -->
+		<property name="build.dir" value="${basedir}/build" />
+		<property name="src.dir" value="${basedir}/src" />
+		<property name="lib.dir" value="${basedir}/lib" />
+		<property name="etc.dir" value="${basedir}/etc" />
+		<property name="javadoc.dir" value="${basedir}/javadoc" />
+
+		<!-- File names -->
+		<property name="build.file.name" value="build.xml" />
+		<property name="license.file.name" value="license-LGPL.txt" />
+		<property name="jgraph.jar.name" value="jgraph.jar" />
+
+		<!-- Files -->
+		<property name="project.jar" value="${basedir}/${project.jar.name}" />
+		<property name="jgraph.jar" value="${lib.dir}/${jgraph.jar.name}" />
+		<property name="build.file" value="${basedir}/${build.file.name}" />
+
+		<!-- Classpath for building and executing -->
+		<path id="build.classpath">
+			<pathelement location="${jgraph.jar}" />
+			<pathelement location="${build.dir}" />
+		</path>
+		<property name="build.classpath" refid="build.classpath" />
+	</target>
+
+	<!-- Compile the classes -->
+	<target name="compile" depends="init" description="Compiles the JGraphT source code.">
+
+		<!-- create a build directory -->
+		<mkdir dir="${build.dir}" />
+
+		<!-- compile the source -->
+		<javac srcdir="${src.dir}" destdir="${build.dir}" debug="on" source="1.6">
+			<classpath refid="build.classpath" />
+			<include name="**/*.java" />
+		</javac>
+	</target>
+
+	<!-- Generate the JGraphT JavaDoc HTML pages -->
+	<target name="javadoc" depends="init" description="Creates the Javadocs.">
+		<delete dir="${javadoc.dir}" />
+		<mkdir dir="${javadoc.dir}" />
+		<javadoc destdir="${javadoc.dir}" source="1.6" failonerror="true" access="protected" windowtitle="JGraphT : a free Java graph library" overview="${src.dir}/overview.html">
+			<classpath refid="build.classpath" />
+			<packageset dir="${src.dir}" defaultexcludes="yes">
+				<include name="**" />
+				<exclude name="org/jgrapht/experimental/**" />
+			</packageset>
+		</javadoc>
+	</target>
+
+	<!-- Clean outputs from previous build -->
+	<target name="clean" depends="init" description="Cleans all outputs from previous builds">
+		<delete dir="${build.dir}" />
+		<delete dir="${javadoc.dir}" />
+	</target>
+
+	<!-- added by eoneil -->
+	<!--This target runs LoadGraph from the base directory, so test.dat
+		is found by the default filename of "test.dat" -->
+	<target name="test-load" depends="compile" description="Runs the provided LoadGraph">
+		<java classname="cs310.LoadGraph">
+			<classpath refid="build.classpath" />
+		</java>
+	</target>
+	
+	<target name="dfs" depends="compile" description="Runs the provided DFSTest program">
+		<java classname="cs310.DFSTest">
+			<classpath refid="build.classpath" />
+		</java>
+	</target>
+</project>

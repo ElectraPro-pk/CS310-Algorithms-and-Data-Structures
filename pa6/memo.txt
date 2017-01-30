@@ -1,0 +1,104 @@
+** I am using 2 late days **
+
+For SimpleGraph1, what is the time complexity of methods addVertex(V) and addEdge(V,V), in terms in the number N of nodes and E of edges in the graph?
+
+addVertex is O(1):
+	if( O(1) ){
+		O(1)
+	}else if( O(1) ){
+		O(1)
+	}else{
+		HashMap.put()  - O(1)
+	}
+
+addEdge is O(1):
+	Assert - O(1)
+	Assert - O(1)
+	if( O(1) ){
+		O(1)
+	}
+	createEdge - O(1)
+	addEdge(V,V,edge){
+		if( O(1) ){
+			O(1)
+		}else if( O(1) ){
+			O(1)
+		}
+		Assert - O(1)
+		Assert - O(1)
+		If ( O(1) ){
+			O(1)
+		}
+		If ( O(1) ){
+			O(1)
+		}
+		Retrieve Set - O(1)
+		Add - O(1)
+		Retrieve Set - O(1)
+		Add - O(1)
+		Put to Map - O(1)
+	}
+
+------------------------------------------------------------------------------------------
+We are using HashMaps in our graph implementation. Could we switch over to TreeMaps by just replacing "HashMap" with "TreeMap", or would there be problems in doing this?
+
+There would be no problems, but the time efficiency would plummet. Graphs will usually want to access arbitary elements in no solid order, and so the ordering of the TreeMap would be useless, and we'd be left with the O(log n) adds and gets, versus HashMap's O(1).
+
+------------------------------------------------------------------------------------------
+If we were using lots of little graphs, the memory overhead of all these HashMaps would be a problem. What is the default initial size of the hash table? How can you halve it?
+
+The initial capacity of the hash maps are 16, but we could just as easily halve that by instantiating a HashMap by using HashMap<>(8);
+------------------------------------------------------------------------------------------
+What is the big-Oh performance of your Dijkstra implementation? Show its derivation and what assumptions you are using.
+
+Where N - number of elements in graph
+Assuming each vertex will have an average of Log N edges going out
+
+if (map contains key)				- O(1)
+	return					- O(1)
+make map					- O(1)
+make queue					- O(1)
+make node					- O(1)
+empty queue add					- O(1)
+hashmap put					- O(1)
+
+while queue not empty				- O(N)
+	make node from queue poll		- O(1)
+
+	for all outgoing edges			- O(log N)
+		new V from get 			- O(1)
+		new double			- O(1)
+		new Node			- O(1)
+		set Node values			- O(1)
+		if HashMap contain(1) or weight compare(1)
+			HashMap put		- O(1)
+		queue add			- O(1)
+
+for all vertexes				- O(N)
+	if map not contains key			- O(1)
+		map put new node		- O(1)
+
+map put 					- O(1)
+
+
+O(NlogN) due to While-For loop 
+------------------------------------------------------------------------------------------
+Estimate the big-Oh memory usage with N nodes and O(1) edges leaving each node.
+
+Assuming there are Log N nodes not in reach of start node
+
+
+Edge memory usage for Dijkstra:
+O(log N) set of edges, in a while loop of O(N)
+O(NlogN) instances of edges in memory
+
+Node memory usage for Dijkstra:
+1 Node for start
+While loop O(N)
+	make node
+	for O(logN)
+		make node
+for all vertexes not in map, make node O(log N)
+O(NlogN) instances of Node in memory
+
+Total memory use O(NlogN)
